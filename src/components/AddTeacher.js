@@ -16,7 +16,7 @@ const AddTeacher = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    const email = `${empNumber}@sreerama.ac.in`;
+    const email = `${empNumber}@sreerama.com`;
 
     const teacherData = { name, empNumber, email, password, department };
     const token = localStorage.getItem("token"); // ✅ Get token

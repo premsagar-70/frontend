@@ -103,7 +103,7 @@ const Login = () => {
                   className="absolute right-2 top-1/2 transform -translate-y-1/2 focus:outline-none"
                 >
                   {
-                    showPassword ? "🫣" : "🙈"
+                    showPassword ? "🙉" : "🙈"
                   }
                 </button>
               </div>

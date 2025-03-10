@@ -41,7 +41,7 @@ const AdminDashboard = () => {
             🎓 Add Student
           </Link>
           <Link to="/add-teacher" className="bg-purple-500 text-white p-4 rounded text-center">
-            👨‍🏫 Assign Teacher to Subjects
+            👨‍🏫 Add Teacher
           </Link>
         </div>
       </div>

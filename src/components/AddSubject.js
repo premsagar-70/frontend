@@ -26,46 +26,40 @@ const AddSubject = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
-  
-    const token = localStorage.getItem("token");  // ✅ Get token
+
+    const token = localStorage.getItem("token");
     if (!token) {
-      setError("Unauthorized: Please log in again.");
-      return;
+        setError("Unauthorized: Please log in again.");
+        return;
     }
-  
+
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subjects`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}` // ✅ Include token in headers
-        },
-        body: JSON.stringify({
-          name,
-          department,
-          year,
-          semester,
-          teacher
-        }),
-      });
-  
-      const data = await response.json();
-      if (response.ok) {
-        alert("Subject added successfully");
-        setName("");
-        setDepartment("");
-        setYear("");
-        setSemester("");
-        setTeacher("");
-      } else {
-        setError(data.message || "Failed to add subject");
-      }
+        const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subjects`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${token}` // ✅ Ensure auth header is sent
+            },
+            body: JSON.stringify({
+                name,
+                department,
+                year,
+                semester,
+                teacher,
+            }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+            throw new Error(data.message || "Failed to add subject");
+        }
+
+        alert("✅ Subject added successfully!");
     } catch (error) {
-      setError("Server error");
-      console.error("Error adding subject:", error);
+        console.error("❌ Error adding subject:", error);
+        setError(error.message);
     }
-  };
-  
+};
 
   return (
     <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-md">
