@@ -40,6 +40,27 @@ const Dashboard = () => {
     window.location.href = "/"; // Redirect to login page
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+
+    if (!token) {
+      alert("⚠️ Please log in first!");
+      window.location.href = "/";
+      return;
+    }
+
+    fetch(`${process.env.REACT_APP_BACKEND_URL}/api/subjects`, {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // ✅ Send token with request
+      }
+    })
+      .then(response => response.json())
+      .then(data => console.log("📜 Subjects:", data))
+      .catch(error => console.error("❌ Error fetching subjects:", error));
+  }, []);
+
   return (
     <div className="container bg-gray-200">
       <nav>
@@ -78,12 +99,25 @@ const Dashboard = () => {
             </Link>
           </div>
         )}
-        <button onClick={() => window.location.href = "/mark-attendance"} className="ml-4 mt-6 bg-blue-500 text-white p-4 rounded text-center">
-          ✅ Mark Attendance
-        </button>
-        <button onClick={() => window.location.href = "/view-reports"} className="ml-4 mt-6 bg-gray-700  text-white p-4 rounded text-center">
-          📊 View Reports
-        </button>
+
+        {role === "teacher" && (
+          <div>
+            <button onClick={() => window.location.href = "/mark-attendance"} className="ml-4 mt-6 bg-blue-500 text-white p-4 rounded text-center">
+              ✅ Mark Attendance
+            </button>
+            <button onClick={() => window.location.href = "/view-reports"} className="ml-4 mt-6 bg-gray-700  text-white p-4 rounded text-center">
+              📊 View Reports
+            </button>
+          </div>
+        )}
+
+        {role === "student" && (
+          <div>
+            <h3 className="text-xl font-bold">📅 Attendance Summary</h3>
+            <h3 className="text-xl font-bold">📊 View Attendance Reports</h3>
+          </div>
+        )}
+
       </div>
     </div>
   );

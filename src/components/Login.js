@@ -12,37 +12,48 @@ const Login = () => {
 
   const onSubmit = async (e) => {
     e.preventDefault();
-    if (!captchaVerified) {
-      setError("Please verify that you are not a robot.");
-      return;
-    }
-
     setError("");  // Clear previous errors
 
-    console.log("📡 Sending login request...");  // Debugging Log
+    console.log("📡 Sending login request...");
+
+    // ✅ Determine correct API endpoint based on email
+    const loginEndpoint = email.includes("@sreerama.ac.in")
+        ? `${process.env.REACT_APP_BACKEND_URL}/api/students/login`
+        : `${process.env.REACT_APP_BACKEND_URL}/api/auth/login`;
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_BACKEND_URL}/api/auth/login`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, password }),
-      });
+        const response = await fetch(loginEndpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
 
-      const data = await response.json();
-      console.log("🔍 Login Response:", data);  // Debugging Log
+        const data = await response.json();
+        console.log("🔍 Login Response:", data);
 
-      if (response.ok) {
-        localStorage.setItem("token", data.token);
-        localStorage.setItem("role", data.user.role);
-        window.location.href = "/dashboard"; // Redirect to dashboard
-      } else {
-        setError("❌ Invalid email or password");
-      }
+        if (response.ok) {
+            localStorage.setItem("token", data.token);
+            localStorage.setItem("role", data.user.role);
+
+            // ✅ Redirect users to their specific dashboards
+            if (data.user.role === "admin") {
+                window.location.href = "/admin-dashboard";
+            } else if (data.user.role === "teacher") {
+                window.location.href = "/teacher-dashboard";
+            } else if (data.user.role === "student") {
+                window.location.href = "/student-dashboard";
+            } else {
+                window.location.href = "/dashboard"; // Default fallback
+            }
+        } else {
+            setError("❌ Invalid email or password");
+        }
     } catch (error) {
-      console.error("🔥 Login Error:", error);
-      setError("⚠️ Unable to connect to server");
+        console.error("🔥 Login Error:", error);
+        setError("⚠️ Unable to connect to server");
     }
-  };
+};
+
 
 
   return (
@@ -105,12 +116,12 @@ const Login = () => {
                 onChange={() => setCaptchaVerified(true)}
               />
             </div>
-            
+
             <br></br>
-            
-              <button type="submit" className="w-full px-6 py-2 bg-blue-500 text-white p-2 rounded">
-                Login
-              </button>
+
+            <button type="submit" className="w-full px-6 py-2 bg-blue-500 text-white p-2 rounded">
+              Login
+            </button>
           </form>
         </div>
       </div>
